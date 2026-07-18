@@ -1,0 +1,21 @@
+{
+  "name": "tucompras-api",
+  "version": "1.0.0",
+  "description": "API REST del sistema de gestión TuCompras - Personal Shopper Internacional",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": ["tucompras", "personal-shopper", "api", "express", "mysql"],
+  "author": "Ruth Canales",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.10.0"
+  }
+}
