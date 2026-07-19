@@ -39,7 +39,7 @@ const clientesService = {
 
   async registrar(datos) {
     // Validaciones de entrada (la BD las repite: defensa en profundidad)
-    const obligatorios = ['nombre', 'apellido', 'telefono'];
+    const obligatorios = ['nombre', 'apellido', 'identidad', 'telefono'];
     for (const campo of obligatorios) {
       if (!datos[campo] || String(datos[campo]).trim() === '') {
         throw ApiError.badRequest(`El campo "${campo}" es obligatorio.`);

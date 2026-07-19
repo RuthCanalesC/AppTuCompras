@@ -71,6 +71,11 @@ La API queda en `http://localhost:4000/api`.
 | GET | `/api/casilleros/:id` | Detalle |
 | POST | `/api/casilleros` | Alta (expansión a nuevos países) |
 | PUT | `/api/casilleros/:id` | Actualización (tarifa auditada por trigger) |
+| GET | `/api/cotizaciones` | Listado gerencial `?estado=&cliente=` (vista `vw_resumen_cotizaciones`) |
+| GET | `/api/cotizaciones/:id` | Cabecera + líneas de detalle |
+| POST | `/api/cotizaciones` | Alta (usa `sp_crear_cotizacion`) |
+| POST | `/api/cotizaciones/:id/detalle` | Agrega producto; el SP recalcula subtotal, envío, comisión y totales USD/HNL |
+| PATCH | `/api/cotizaciones/:id/estado` | Cambio de estado con máquina de estados validada |
 
 > No existe DELETE en clientes/catálogos por regla de negocio **RN-07**:
 > el historial comercial nunca se borra; se inactiva con `estado`.
@@ -95,13 +100,23 @@ La API queda en `http://localhost:4000/api`.
 - ✅ Filtros de catálogos (`?estado=Activo`)
 - ✅ Cambio de comisión registrado automáticamente en `log_auditoria` por trigger
 
+### Reglas de negocio del módulo de cotizaciones
+
+- **Máquina de estados:** `Pendiente → Enviada → Aprobada / Rechazada / Vencida`.
+  Los estados finales no admiten cambios (HTTP 409 con la transición explicada).
+- No se puede aprobar una cotización **sin productos**.
+- El detalle solo se agrega en `Pendiente`/`Enviada` (reforzado por el SP en la BD).
+- La tarifa por libra del envío estimado **se resuelve desde el casillero previsto**
+  (`id_casillero`), no se digita a mano: cero errores de tarifa.
+- Totales verificados contra la validación del proyecto: 2 productos / 2 plataformas
+  → $378.46 USD → L 10,029.19 con tasa 26.50. ✅
+
 ## Próximas fases
 
-1. Módulo de **cotizaciones** (usa `sp_crear_cotizacion` + `sp_agregar_detalle_cotizacion`)
-2. Módulo de **compras y abonos** (usa `sp_registrar_compra`, triggers de saldo)
-3. Módulo de **envíos y entregas** (usa `sp_procesar_entrega`)
-4. Módulo de **reportes** (vistas `vw_*`)
-5. **Autenticación JWT** con roles (Administrador / Operaciones)
-6. Documentación **Swagger/OpenAPI**
-7. Frontend **React** con dashboard gerencial
-8. **Docker** para despliegue
+1. Módulo de **compras y abonos** (usa `sp_registrar_compra`, triggers de saldo)
+2. Módulo de **envíos y entregas** (usa `sp_procesar_entrega`)
+3. Módulo de **reportes** (vistas `vw_*`)
+4. **Autenticación JWT** con roles (Administrador / Operaciones)
+5. Documentación **Swagger/OpenAPI**
+6. Frontend **React** con dashboard gerencial
+7. **Docker** para despliegue
