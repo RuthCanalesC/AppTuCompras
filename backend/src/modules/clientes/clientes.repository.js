@@ -25,14 +25,14 @@ const clientesRepository = {
     }
     if (buscar) {
       condiciones.push(
-        '(nombre LIKE :buscar OR apellido LIKE :buscar OR telefono LIKE :buscar)'
+        '(nombre LIKE :buscar OR apellido LIKE :buscar OR identidad LIKE :buscar OR telefono LIKE :buscar)'
       );
       params.buscar = `%${buscar}%`;
     }
 
     const where = condiciones.length ? `WHERE ${condiciones.join(' AND ')}` : '';
     const [rows] = await pool.query(
-      `SELECT id_cliente, nombre, apellido, telefono, email,
+      `SELECT id_cliente, nombre, apellido, identidad, telefono, email,
               direccion, ciudad, tipo_cliente, fecha_registro, estado
          FROM clientes
          ${where}
@@ -46,7 +46,7 @@ const clientesRepository = {
   /** Busca un cliente por su ID. */
   async findById(idCliente) {
     const [rows] = await pool.query(
-      `SELECT id_cliente, nombre, apellido, telefono, email,
+      `SELECT id_cliente, nombre, apellido, identidad, telefono, email,
               direccion, ciudad, tipo_cliente, fecha_registro, estado
          FROM clientes
         WHERE id_cliente = :idCliente`,
@@ -60,12 +60,13 @@ const clientesRepository = {
     const conn = await pool.getConnection();
     try {
       await conn.query(
-        `CALL sp_registrar_cliente(:nombre, :apellido, :telefono,
+        `CALL sp_registrar_cliente(:nombre, :apellido, :identidad, :telefono,
                                    :email, :direccion, :ciudad, :tipoCliente,
                                    @id_cliente)`,
         {
           nombre: datos.nombre,
           apellido: datos.apellido,
+          identidad: datos.identidad,
           telefono: datos.telefono,
           email: datos.email ?? null,
           direccion: datos.direccion ?? null,
