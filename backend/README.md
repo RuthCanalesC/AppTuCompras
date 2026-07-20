@@ -84,6 +84,13 @@ La API queda en `http://localhost:4000/api`.
 | POST | `/api/compras/:id/abonos` | Abono; los triggers validan y actualizan el saldo |
 | PATCH | `/api/compras/:id/estado` | Estado logístico (Comprada→…→Recibida_HN) validado |
 | PATCH | `/api/compras/:id/detalle/:idDetalle` | Orden, tracking, peso real y estado del producto |
+| GET | `/api/envios` | Lista `?compra=&estado=` |
+| GET | `/api/envios/:id` | Detalle con casillero y cliente |
+| POST | `/api/envios` | Alta (compra viva + casillero activo) |
+| PATCH | `/api/envios/:id` | Fechas, pesos, flete, aduana y estado logístico |
+| GET | `/api/entregas` | Lista con ganancia y margen por entrega |
+| GET | `/api/entregas/:id` | Detalle + cierre financiero completo |
+| POST | `/api/entregas` | Procesa la entrega (usa `sp_procesar_entrega`) |
 
 > No existe DELETE en clientes/catálogos por regla de negocio **RN-07**:
 > el historial comercial nunca se borra; se inactiva con `estado`.
@@ -134,11 +141,24 @@ La API queda en `http://localhost:4000/api`.
 - Flujo verificado: compra de L 10,029.19 con anticipo de L 5,000 →
   saldo L 5,029.19 calculado por trigger (idéntico a la validación del proyecto). ✅
 
+### Reglas de negocio del módulo de envíos y entregas
+
+- **Envíos:** solo para compras vivas (no Entregada/Cancelada) y casilleros `Activo`.
+  Máquina de estados: `En_Casillero → En_Transito → En_Aduana → Recibido_HN`.
+  Los costos reales (flete USD, aduana HNL) registrados aquí alimentan el cierre.
+- **RN-05:** la entrega con saldo pendiente es **bloqueada por el SP** (HTTP 400).
+  Si el cliente paga contra entrega, se envía `monto_liquidacion_hnl` y el SP lo
+  aplica como abono final antes de validar.
+- Al entregar, `sp_procesar_entrega` cierra en cascada: compra → `Entregada`,
+  productos → `Entregado`, y genera el **cierre financiero automático** en
+  `entregas_ganancias` (ingreso − productos − flete − aduana − entrega local).
+- Ciclo completo verificado: entrega con liquidación de L 3,029.19 →
+  ganancia neta L 764.81, margen 7.63% (mismo margen que la validación del proyecto). ✅
+
 ## Próximas fases
 
-1. Módulo de **envíos y entregas** (usa `sp_procesar_entrega`)
-2. Módulo de **reportes** (vistas `vw_*`)
-3. **Autenticación JWT** con roles (Administrador / Operaciones)
-4. Documentación **Swagger/OpenAPI**
-5. Frontend **React** con dashboard gerencial
-6. **Docker** para despliegue
+1. Módulo de **reportes** (vistas `vw_*`)
+2. **Autenticación JWT** con roles (Administrador / Operaciones)
+3. Documentación **Swagger/OpenAPI**
+4. Frontend **React** con dashboard gerencial
+5. **Docker** para despliegue

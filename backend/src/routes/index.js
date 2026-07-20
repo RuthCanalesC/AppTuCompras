@@ -14,6 +14,8 @@ const plataformasRoutes = require('../modules/plataformas/plataformas.routes');
 const casillerosRoutes = require('../modules/casilleros/casilleros.routes');
 const cotizacionesRoutes = require('../modules/cotizaciones/cotizaciones.routes');
 const comprasRoutes = require('../modules/compras/compras.routes');
+const enviosRoutes = require('../modules/envios/envios.routes');
+const entregasRoutes = require('../modules/entregas/entregas.routes');
 
 const router = Router();
 
@@ -32,5 +34,7 @@ router.use('/plataformas', plataformasRoutes);
 router.use('/casilleros', casillerosRoutes);
 router.use('/cotizaciones', cotizacionesRoutes);
 router.use('/compras', comprasRoutes);
+router.use('/envios', enviosRoutes);
+router.use('/entregas', entregasRoutes);
 
 module.exports = router;
