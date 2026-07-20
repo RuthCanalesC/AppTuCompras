@@ -13,6 +13,7 @@ const clientesRoutes = require('../modules/clientes/clientes.routes');
 const plataformasRoutes = require('../modules/plataformas/plataformas.routes');
 const casillerosRoutes = require('../modules/casilleros/casilleros.routes');
 const cotizacionesRoutes = require('../modules/cotizaciones/cotizaciones.routes');
+const comprasRoutes = require('../modules/compras/compras.routes');
 
 const router = Router();
 
@@ -30,5 +31,6 @@ router.use('/clientes', clientesRoutes);
 router.use('/plataformas', plataformasRoutes);
 router.use('/casilleros', casillerosRoutes);
 router.use('/cotizaciones', cotizacionesRoutes);
+router.use('/compras', comprasRoutes);
 
 module.exports = router;

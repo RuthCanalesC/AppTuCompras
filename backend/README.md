@@ -76,6 +76,14 @@ La API queda en `http://localhost:4000/api`.
 | POST | `/api/cotizaciones` | Alta (usa `sp_crear_cotizacion`) |
 | POST | `/api/cotizaciones/:id/detalle` | Agrega producto; el SP recalcula subtotal, envío, comisión y totales USD/HNL |
 | PATCH | `/api/cotizaciones/:id/estado` | Cambio de estado con máquina de estados validada |
+| GET | `/api/compras` | Lista `?estado=&con_saldo=true` |
+| GET | `/api/compras/pendientes-pago` | Cuentas por cobrar (vista `vw_compras_pendientes_pago`) |
+| GET | `/api/compras/:id` | Cabecera + productos + historial de abonos |
+| GET | `/api/compras/:id/estado-cuenta` | Estado de cuenta: total, abonado, saldo, % pagado |
+| POST | `/api/compras` | Alta desde cotización Aprobada (usa `sp_registrar_compra`) |
+| POST | `/api/compras/:id/abonos` | Abono; los triggers validan y actualizan el saldo |
+| PATCH | `/api/compras/:id/estado` | Estado logístico (Comprada→…→Recibida_HN) validado |
+| PATCH | `/api/compras/:id/detalle/:idDetalle` | Orden, tracking, peso real y estado del producto |
 
 > No existe DELETE en clientes/catálogos por regla de negocio **RN-07**:
 > el historial comercial nunca se borra; se inactiva con `estado`.
@@ -111,12 +119,26 @@ La API queda en `http://localhost:4000/api`.
 - Totales verificados contra la validación del proyecto: 2 productos / 2 plataformas
   → $378.46 USD → L 10,029.19 con tasa 26.50. ✅
 
+### Reglas de negocio del módulo de compras y abonos
+
+- **RN-02:** solo cotizaciones `Aprobada` generan compra, y exactamente una
+  (reforzado por el SP y el índice UNIQUE en la BD).
+- **RN-03/RN-04:** el saldo pendiente **solo** lo mueven los abonos, vía triggers.
+  La API jamás escribe `saldo_pendiente_hnl` directamente; un abono que excede
+  el saldo es rechazado por el trigger `BEFORE INSERT` y llega como HTTP 400.
+- El anticipo se registra automáticamente como primer abono (lo hace el SP).
+- **Máquina de estados logística:** `Comprada → En_Casillero → En_Transito →
+  En_Aduana → Recibida_HN`. `Entregada` no se asigna manualmente — la asigna
+  `sp_procesar_entrega` (módulo de entregas), que exige saldo en cero (RN-05).
+  `Cancelada` solo desde `Comprada`.
+- Flujo verificado: compra de L 10,029.19 con anticipo de L 5,000 →
+  saldo L 5,029.19 calculado por trigger (idéntico a la validación del proyecto). ✅
+
 ## Próximas fases
 
-1. Módulo de **compras y abonos** (usa `sp_registrar_compra`, triggers de saldo)
-2. Módulo de **envíos y entregas** (usa `sp_procesar_entrega`)
-3. Módulo de **reportes** (vistas `vw_*`)
-4. **Autenticación JWT** con roles (Administrador / Operaciones)
-5. Documentación **Swagger/OpenAPI**
-6. Frontend **React** con dashboard gerencial
-7. **Docker** para despliegue
+1. Módulo de **envíos y entregas** (usa `sp_procesar_entrega`)
+2. Módulo de **reportes** (vistas `vw_*`)
+3. **Autenticación JWT** con roles (Administrador / Operaciones)
+4. Documentación **Swagger/OpenAPI**
+5. Frontend **React** con dashboard gerencial
+6. **Docker** para despliegue
