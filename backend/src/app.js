@@ -18,9 +18,11 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const morgan = require('morgan');
+const swaggerUi = require('swagger-ui-express');
 
 const env = require('./config/env');
 const apiRoutes = require('./routes');
+const openapi = require('./docs/openapi');
 const { notFoundHandler, errorHandler } = require('./middlewares/errorHandler');
 
 const app = express();
@@ -31,6 +33,17 @@ if (env.nodeEnv === 'development') {
   app.use(morgan('dev'));
 }
 app.use(express.json());
+
+// Documentación interactiva (Swagger UI) y especificación cruda
+app.get('/api/docs.json', (_req, res) => res.json(openapi));
+app.use(
+  '/api/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(openapi, {
+    customSiteTitle: 'TuCompras API — Documentación',
+    swaggerOptions: { persistAuthorization: true }, // conserva el token entre recargas
+  })
+);
 
 app.use('/api', apiRoutes);
 

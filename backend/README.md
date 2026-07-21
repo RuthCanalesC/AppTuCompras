@@ -54,6 +54,10 @@ npm start               # o: npm run dev (recarga automática)
 
 La API queda en `http://localhost:4000/api`.
 
+**Documentación interactiva (Swagger UI):** `http://localhost:4000/api/docs`
+— 43 endpoints documentados con esquemas, ejemplos y el botón *Authorize* para
+probar con el token JWT (especificación cruda en `/api/docs.json`).
+
 ## Endpoints implementados
 
 | Método | Ruta | Descripción |
@@ -195,8 +199,17 @@ Toda la API exige `Authorization: Bearer <token>` excepto `/health` y `/auth/log
   `operaciones` / `Operaciones#2026` — **cambiar en producción**.
 - Requiere ejecutar `database/usuarios_auth.sql` después del script maestro.
 
+### Documentación OpenAPI
+
+- Especificación **OpenAPI 3.0.3** escrita en JavaScript (`src/docs/openapi.js`)
+  con funciones auxiliares para respuestas estándar — sin repetición.
+- 10 categorías (tags) alineadas con los requerimientos funcionales (RF-01…RF-13),
+  esquemas reutilizables de las 8 entidades principales y seguridad Bearer JWT
+  declarada globalmente (con `persistAuthorization` para no perder el token).
+- Cada endpoint documenta sus errores reales: 400 con los mensajes de los SP,
+  409 de las máquinas de estados, 403 de la matriz de roles.
+
 ## Próximas fases
 
-1. Documentación **Swagger/OpenAPI**
-2. Frontend **React** con dashboard gerencial
-3. **Docker** para despliegue
+1. Frontend **React** con dashboard gerencial
+2. **Docker** para despliegue
