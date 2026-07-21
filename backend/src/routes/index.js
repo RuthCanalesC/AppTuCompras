@@ -16,6 +16,7 @@ const cotizacionesRoutes = require('../modules/cotizaciones/cotizaciones.routes'
 const comprasRoutes = require('../modules/compras/compras.routes');
 const enviosRoutes = require('../modules/envios/envios.routes');
 const entregasRoutes = require('../modules/entregas/entregas.routes');
+const reportesRoutes = require('../modules/reportes/reportes.routes');
 
 const router = Router();
 
@@ -36,5 +37,6 @@ router.use('/cotizaciones', cotizacionesRoutes);
 router.use('/compras', comprasRoutes);
 router.use('/envios', enviosRoutes);
 router.use('/entregas', entregasRoutes);
+router.use('/reportes', reportesRoutes);
 
 module.exports = router;

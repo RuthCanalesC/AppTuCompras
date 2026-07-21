@@ -91,6 +91,11 @@ La API queda en `http://localhost:4000/api`.
 | GET | `/api/entregas` | Lista con ganancia y margen por entrega |
 | GET | `/api/entregas/:id` | Detalle + cierre financiero completo |
 | POST | `/api/entregas` | Procesa la entrega (usa `sp_procesar_entrega`) |
+| GET | `/api/reportes/resumen` | KPIs del dashboard: clientes, pipeline, CxC, rentabilidad |
+| GET | `/api/reportes/ganancias` | Detalle con prorrateo `?desde=&hasta=&cliente=&plataforma=` |
+| GET | `/api/reportes/ganancias-por-plataforma` | Rentabilidad agregada por tienda |
+| GET | `/api/reportes/ganancias-por-cliente` | Rentabilidad agregada por cliente |
+| GET | `/api/reportes/pipeline-cotizaciones` | Cotizaciones por estado con montos |
 
 > No existe DELETE en clientes/catálogos por regla de negocio **RN-07**:
 > el historial comercial nunca se borra; se inactiva con `estado`.
@@ -155,10 +160,18 @@ La API queda en `http://localhost:4000/api`.
 - Ciclo completo verificado: entrega con liquidación de L 3,029.19 →
   ganancia neta L 764.81, margen 7.63% (mismo margen que la validación del proyecto). ✅
 
+### Módulo de reportes (RF-12)
+
+- Se apoya en las vistas de la Fase 9: la lógica pesada (joins, prorrateo por
+  producto) vive en la base de datos; la API solo filtra y agrega.
+- `/resumen` compone los KPIs con consultas en paralelo (`Promise.all`).
+- Filtros de fecha validados (formato `YYYY-MM-DD` y coherencia desde ≤ hasta).
+- Verificado con los datos reales del ciclo completo: prorrateo 90.63% / 9.37%
+  por producto, idéntico a la validación del proyecto. ✅
+
 ## Próximas fases
 
-1. Módulo de **reportes** (vistas `vw_*`)
-2. **Autenticación JWT** con roles (Administrador / Operaciones)
-3. Documentación **Swagger/OpenAPI**
-4. Frontend **React** con dashboard gerencial
-5. **Docker** para despliegue
+1. **Autenticación JWT** con roles (Administrador / Operaciones)
+2. Documentación **Swagger/OpenAPI**
+3. Frontend **React** con dashboard gerencial
+4. **Docker** para despliegue
