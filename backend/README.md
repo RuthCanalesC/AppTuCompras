@@ -58,7 +58,12 @@ La API queda en `http://localhost:4000/api`.
 
 | Método | Ruta | Descripción |
 |---|---|---|
-| GET | `/api/health` | Estado del servicio |
+| GET | `/api/health` | Estado del servicio (pública) |
+| POST | `/api/auth/login` | Inicio de sesión → JWT (pública) |
+| GET | `/api/auth/perfil` | Perfil del usuario autenticado |
+| GET | `/api/auth/usuarios` | Lista de usuarios (solo Administrador) |
+| POST | `/api/auth/usuarios` | Alta de usuario con bcrypt (solo Administrador) |
+| PATCH | `/api/auth/usuarios/:id/estado` | Activar/inactivar cuenta (solo Administrador) |
 | GET | `/api/clientes` | Lista con filtros `?estado=&tipo=&buscar=` |
 | GET | `/api/clientes/:id` | Detalle de cliente |
 | POST | `/api/clientes` | Alta (usa `sp_registrar_cliente`) |
@@ -169,9 +174,29 @@ La API queda en `http://localhost:4000/api`.
 - Verificado con los datos reales del ciclo completo: prorrateo 90.63% / 9.37%
   por producto, idéntico a la validación del proyecto. ✅
 
+### Seguridad (RF-13 — matriz de privilegios de la Fase 11)
+
+Toda la API exige `Authorization: Bearer <token>` excepto `/health` y `/auth/login`.
+
+| Recurso | Administrador | Operaciones |
+|---|---|---|
+| clientes, cotizaciones | ✔ total | ✔ total |
+| plataformas, casilleros | ✔ total | Solo lectura |
+| compras, abonos, envíos, entregas | ✔ | ✖ (finanzas) |
+| reportes gerenciales | ✔ | ✖ |
+| gestión de usuarios | ✔ | ✖ |
+
+- Contraseñas con **bcrypt** (nunca en texto plano); JWT firmado con expiración
+  configurable (`JWT_SECRET`, `JWT_EXPIRES_IN` en `.env`).
+- El error de login es el mismo para usuario inexistente y contraseña incorrecta
+  (no se revela cuál falló). Cuentas inactivas no inician sesión (403).
+- Un administrador no puede inactivar su propia cuenta.
+- Usuarios semilla (`node scripts/seed-usuarios.js`): `admin` / `Admin#2026` y
+  `operaciones` / `Operaciones#2026` — **cambiar en producción**.
+- Requiere ejecutar `database/usuarios_auth.sql` después del script maestro.
+
 ## Próximas fases
 
-1. **Autenticación JWT** con roles (Administrador / Operaciones)
-2. Documentación **Swagger/OpenAPI**
-3. Frontend **React** con dashboard gerencial
-4. **Docker** para despliegue
+1. Documentación **Swagger/OpenAPI**
+2. Frontend **React** con dashboard gerencial
+3. **Docker** para despliegue

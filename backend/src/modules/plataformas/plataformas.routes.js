@@ -10,12 +10,14 @@
  */
 const { Router } = require('express');
 const plataformasController = require('./plataformas.controller');
+const { requireRole } = require('../../middlewares/auth');
 
 const router = Router();
 
+// Lectura: ambos roles. Escritura: solo Administrador (Fase 11).
 router.get('/', plataformasController.listar);
 router.get('/:id', plataformasController.obtener);
-router.post('/', plataformasController.crear);
-router.put('/:id', plataformasController.actualizar);
+router.post('/', requireRole('Administrador'), plataformasController.crear);
+router.put('/:id', requireRole('Administrador'), plataformasController.actualizar);
 
 module.exports = router;

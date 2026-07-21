@@ -10,12 +10,14 @@
  */
 const { Router } = require('express');
 const casillerosController = require('./casilleros.controller');
+const { requireRole } = require('../../middlewares/auth');
 
 const router = Router();
 
+// Lectura: ambos roles. Escritura: solo Administrador (Fase 11).
 router.get('/', casillerosController.listar);
 router.get('/:id', casillerosController.obtener);
-router.post('/', casillerosController.crear);
-router.put('/:id', casillerosController.actualizar);
+router.post('/', requireRole('Administrador'), casillerosController.crear);
+router.put('/:id', requireRole('Administrador'), casillerosController.actualizar);
 
 module.exports = router;

@@ -21,6 +21,11 @@ const env = {
     database: process.env.DB_NAME || 'tucompras_db',
     connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT || '10', 10),
   },
+
+  jwt: {
+    secret: process.env.JWT_SECRET || 'cambie-este-secreto-en-produccion',
+    expiresIn: process.env.JWT_EXPIRES_IN || '8h',
+  },
 };
 
 module.exports = env;
