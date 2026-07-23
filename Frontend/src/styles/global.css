@@ -1,0 +1,171 @@
+/* ============================================================
+   TUCOMPRAS — Sistema de diseño
+   Tokens tomados del Manual de Identidad Corporativa (v1.0):
+     Negro Premium #121212 · Dorado #D4AF37 · Blanco · Gris #3A3A3A
+     Poppins (títulos) · Roboto (texto)
+   Filosofía: "Elegancia, confianza y conexión internacional."
+   ============================================================ */
+
+:root {
+  /* Paleta corporativa */
+  --negro-premium: #121212;
+  --dorado: #d4af37;
+  --dorado-suave: #e6c96a;
+  --dorado-oscuro: #a8891f;
+  --blanco: #ffffff;
+  --gris-elegante: #3a3a3a;
+
+  /* Superficies (tema oscuro premium) */
+  --superficie-0: #121212;   /* fondo de la aplicación */
+  --superficie-1: #1c1c1c;   /* tarjetas y paneles */
+  --superficie-2: #262626;   /* elementos elevados, inputs */
+  --borde: #333333;
+  --borde-suave: #2a2a2a;
+
+  /* Tinta (texto) */
+  --tinta-1: #f5f5f5;        /* principal */
+  --tinta-2: #b8b8b8;        /* secundaria */
+  --tinta-3: #8a8a8a;        /* atenuada */
+
+  /* Estados (reservados, nunca para series de datos) */
+  --exito: #4caf7d;
+  --alerta: #e0a63d;
+  --peligro: #e05d5d;
+
+  /* Tipografía */
+  --fuente-titulos: 'Poppins', sans-serif;
+  --fuente-texto: 'Roboto', sans-serif;
+
+  /* Métricas */
+  --radio: 10px;
+  --radio-sm: 6px;
+  --sombra: 0 4px 18px rgba(0, 0, 0, 0.35);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root { height: 100%; }
+
+body {
+  background: var(--superficie-0);
+  color: var(--tinta-1);
+  font-family: var(--fuente-texto);
+  font-size: 14.5px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 { font-family: var(--fuente-titulos); font-weight: 600; }
+
+a { color: var(--dorado); text-decoration: none; }
+
+button { font-family: var(--fuente-titulos); cursor: pointer; }
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--radio-sm);
+  border: 1px solid transparent;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+.btn-oro {
+  background: var(--dorado);
+  color: var(--negro-premium);
+}
+.btn-oro:hover { background: var(--dorado-suave); }
+.btn-oro:disabled { background: var(--gris-elegante); color: var(--tinta-3); cursor: not-allowed; }
+.btn-fantasma {
+  background: transparent;
+  color: var(--tinta-2);
+  border-color: var(--borde);
+}
+.btn-fantasma:hover { color: var(--dorado); border-color: var(--dorado); }
+
+/* ---------- Formularios ---------- */
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo label {
+  font-family: var(--fuente-titulos);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--tinta-2);
+  letter-spacing: 0.3px;
+}
+.campo input, .campo select, .campo textarea {
+  background: var(--superficie-2);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  color: var(--tinta-1);
+  padding: 10px 12px;
+  font-family: var(--fuente-texto);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+  border-color: var(--dorado);
+}
+
+/* ---------- Tarjetas ---------- */
+.tarjeta {
+  background: var(--superficie-1);
+  border: 1px solid var(--borde-suave);
+  border-radius: var(--radio);
+  padding: 22px;
+}
+
+/* ---------- Tablas ---------- */
+.tabla { width: 100%; border-collapse: collapse; }
+.tabla th {
+  font-family: var(--fuente-titulos);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--tinta-3);
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--borde);
+}
+.tabla td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--borde-suave);
+  color: var(--tinta-1);
+}
+.tabla tbody tr:hover { background: var(--superficie-2); }
+
+/* ---------- Chips de estado ---------- */
+.chip {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--fuente-titulos);
+}
+.chip-activo   { background: rgba(76, 175, 125, 0.15); color: var(--exito); }
+.chip-inactivo { background: rgba(224, 93, 93, 0.15);  color: var(--peligro); }
+.chip-neutro   { background: rgba(212, 175, 55, 0.12); color: var(--dorado); }
+.chip-info     { background: rgba(184, 184, 184, 0.12); color: var(--tinta-2); }
+
+/* ---------- Utilidades ---------- */
+.linea-dorada {
+  height: 2px;
+  width: 48px;
+  background: var(--dorado);
+  border-radius: 2px;
+}
+.texto-secundario { color: var(--tinta-2); }
+.texto-atenuado { color: var(--tinta-3); font-size: 13px; }
+.error-banner {
+  background: rgba(224, 93, 93, 0.12);
+  border: 1px solid rgba(224, 93, 93, 0.4);
+  color: var(--peligro);
+  border-radius: var(--radio-sm);
+  padding: 10px 14px;
+  font-size: 13.5px;
+}
